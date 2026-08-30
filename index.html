@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Shihan Mallari Chen — RSVP</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+     /* ==========================
+       Loading screen styles (scoped for initial overlay)
+       Inserted loader adapted from user-provided snippet
+       ========================== */
+     #loader{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:2000;background:linear-gradient(180deg, rgba(122,20,33,0.95) 0%, rgba(163,24,42,0.95) 60%, rgba(122,20,33,1) 100%);}
+     #loader.hidden{display:none}
+     #loader .clouds{position:absolute;inset:0;opacity:.14;pointer-events:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><g fill='none' stroke='%23f0d38f' stroke-width='2'><path d='M20 60 Q35 40 50 60 T80 60 Q95 40 110 60'/><path d='M120 150 Q135 130 150 150 T180 150 Q195 130 210 150'/></g></svg>");background-size:220px 220px}
+     #loader .scene{position:relative;width:min(92vw,520px);display:flex;flex-direction:column;align-items:center;text-align:center;color:#fbf1de}
+     #loader .lantern{position:absolute;top:-64px;width:60px;height:78px;transform-origin:top center}
+     #loader .lantern.l{left:-8px;animation:swingL 4.2s ease-in-out infinite}
+     #loader .lantern.r{right:-8px;animation:swingR 4.6s ease-in-out infinite}
+     @keyframes swingL{0%,100%{transform:rotate(-6deg);}50%{transform:rotate(4deg);}}@keyframes swingR{0%,100%{transform:rotate(6deg);}50%{transform:rotate(-4deg);}}
+     #loader .gate-wrap{position:relative;width:280px;height:280px;margin-top:36px}
+     #loader .petal{transform-origin:0 0;transform:scale(.25);opacity:0;transition:opacity .7s ease, transform .7s cubic-bezier(.34,1.56,.64,1)}
+     #loader .petal.bloom{opacity:1;transform:scale(1)}
+     #loader .petal path{fill:#e8a3a8;stroke:#f0d38f;stroke-width:1.1}
+     #loader .petal-center{fill:#d8b26a;opacity:0;transition:opacity .6s ease .3s}
+     #loader .petal-center.bloom{opacity:1}
+     #loader .eyebrow{margin-top:26px;letter-spacing:.6em;font-size:13px;color:#f0d38f;text-indent:.6em}
+     #loader .name{font-family:"Ma Shan Zheng",cursive;font-size:clamp(46px,12vw,64px);color:var(--ivory);margin:6px 0 2px;text-shadow:0 0 18px rgba(216,178,106,.5), 0 2px 0 rgba(107,42,58,1)}
+     #loader .sub{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:17px;color:#f0d38f;letter-spacing:.08em;opacity:.95}
+     #loader .load-row{margin-top:30px;width:220px;display:flex;flex-direction:column;align-items:center;gap:8px}
+     #loader .track{width:100%;height:3px;background:rgba(240,211,143,.25);border-radius:2px;overflow:hidden}
+     #loader .fill{height:100%;width:0%;background:linear-gradient(90deg,#d8b26a,#f0d38f);transition:width .12s linear}
+     #loader .load-label{font-size:12px;letter-spacing:.25em;color:#f0d38f;opacity:.85;display:flex;gap:10px}
+    #fallLayer{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+    #fallLayer .sakura-leaf{position:absolute;top:-24px;width:12px;height:17px;border-radius:100% 0 100% 0;background:#f6a7b5;box-shadow:0 0 8px rgba(246,167,181,.35);opacity:.85;animation:fallSakura linear infinite}
+    @keyframes fallSakura{0%{transform:translate3d(0,-30px,0) rotate(0deg);opacity:0}10%{opacity:.85}50%{transform:translate3d(var(--drift),50vh,0) rotate(180deg)}90%{opacity:.75}100%{transform:translate3d(calc(var(--drift) * -1),110vh,0) rotate(360deg);opacity:0}}
+    /* loader CTA removed */
+     #loader .invite{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .9s ease;background:radial-gradient(ellipse at 50% 30%, #c22436 0%, #a3182a 55%, #7a1421 100%)}
+     #loader .invite.show{opacity:1;pointer-events:auto}
+     #loader .invite .details{font-size:13px;line-height:2;color:var(--ivory);opacity:.95}
+     /* hide main site until loader dismissed */
+     body:not(.loaded) header, body:not(.loaded) main, body:not(.loaded) footer, body:not(.loaded) .music-btn, body:not(.loaded) .blossom{opacity:0;pointer-events:none;transform:translateY(6px);transition:opacity .45s ease, transform .45s ease}
+
+    /* ==========================
+       CSS Variables (Palette)
+       ========================== */
+    :root{
+      --soft-pink:#fde8ee;
+      --pastel-pink:#ffd6e3;
+      --blush:#f7a8b8;
+      --ivory:#fffaf6;
+      --muted-gold:#d4b76a;
+      --text-dark:#6b2a3a;
+      --card-shadow: 0 8px 20px rgba(107,42,58,0.08);
+      --glass: rgba(255,255,255,0.6);
+      --radius:18px;
+      --max-width:1100px;
+    }
+
+    /* ==========================
+       Base Reset + Typography
+       ========================== */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Poppins, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color:var(--text-dark);
+      background: linear-gradient(180deg, var(--soft-pink) 0%, var(--ivory) 100%);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+      scroll-behavior:smooth;
+    }
+    h1,h2,h3{font-family:'Playfair Display', serif;margin:0;color:var(--text-dark)}
+    p{margin:0}
+
+    /* ==========================
+       Layout & Container
+       ========================== */
+    .container{max-width:var(--max-width);margin:0 auto;padding:28px}
+
+     /* Small global nudge: lift main content and footer slightly to reduce vertical whitespace */
+     main{margin-top:-12px}
+     footer{margin-top:-8px}
+     @media(max-width:900px){ main{margin-top:-6px} footer{margin-top:-6px} }
+
+    /* ==========================
+       Navigation
+       ========================== */
+    header{position:fixed;inset:0 auto auto 0;width:100%;z-index:40}
+    .nav-wrap{backdrop-filter: blur(6px);background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.35));border-bottom:1px solid rgba(213,183,154,0.08)}
+    nav.container{display:flex;align-items:center;justify-content:space-between;padding:14px 24px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--pastel-pink),var(--ivory));display:flex;align-items:center;justify-content:center;border:2px solid rgba(212,183,106,0.12);box-shadow:var(--card-shadow)}
+    .logo svg{width:28px;height:28px;fill:var(--muted-gold)}
+    .logo img{width:28px;height:28px;object-fit:cover;display:block}
+    .nav-links{display:flex;gap:18px;align-items:center}
+    .nav-links a{color:var(--text-dark);text-decoration:none;padding:8px 10px;border-radius:10px}
+    .nav-links a:focus,.nav-links a:hover{background:rgba(255,255,255,0.5);outline:none}
+    .cta{background:linear-gradient(90deg,var(--blush),#ffb7c6);color:white;padding:8px 14px;border-radius:12px;border:none;cursor:pointer}
+
+    /* Mobile nav */
+    .hamburger{display:none;border:0;background:transparent;font-size:22px}
+    @media(max-width:800px){
+      .nav-links{display:none}
+      .hamburger{display:block}
+    }
+
+    /* ==========================
+       Hero
+       ========================== */
+    .hero{min-height:100vh;display:grid;grid-template-columns:max-content minmax(280px,460px);align-items:stretch;align-content:center;justify-content:center;padding:48px 0;gap:18px}
+    .hero-inner{padding:24px;transform:none;order:2;margin:0}
+    .eyebrow{color:var(--muted-gold);font-weight:600;letter-spacing:1px}
+    .hero-title{font-size:40px;margin:10px 0}
+    .hero-sub{font-size:20px;color:rgba(107,42,58,0.9);margin-bottom:2px}
+    .hero-sub-text{color:rgba(107,42,58,0.9);margin-bottom:18px}
+    .hero-meta{background:linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0.5));display:inline-block;padding:12px;border-radius:12px;border:1px solid rgba(212,183,106,0.12);box-shadow:var(--card-shadow)}
+    .dress-code-image{display:block;width:min(100%,280px);height:auto;margin:14px auto 0}
+    .hero-cta{margin-top:18px}
+
+    /* Photo card */
+    .photo-visual{position:relative;display:flex;align-items:stretch;gap:18px;z-index:14;height:100%}
+    .photo-deco{position:static;transform:none;right:auto;top:auto;width:90px;height:auto;display:block;filter:drop-shadow(0 10px 18px rgba(107,42,58,0.12));pointer-events:none;z-index:20;align-self:center;flex:0 0 auto}
+    .photo-card{width:100%;max-width:320px;margin:0;border-radius:20px;overflow:hidden;border:1px solid rgba(212,183,106,0.12);box-shadow: 0 10px 24px rgba(107,42,58,0.06);background:linear-gradient(180deg,var(--ivory),rgba(255,255,255,0.6));position:relative;z-index:14;transition:transform .36s ease,box-shadow .36s ease;flex:0 0 320px;height:100%;min-height:360px}
+    .photo-card img{display:block;width:100%;height:100%;object-fit:cover}
+
+    /* Adjust photo column padding so image centers nicely in hero */
+    .hero > .container:nth-child(2){order:1;padding:0;display:flex;align-items:stretch;justify-content:center}
+    .photo-overlay{position:absolute;left:12px;bottom:12px;background:rgba(0,0,0,0.45);color:#fff;padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(2px)}
+
+    /* Decorative elements */
+    .lantern{position:absolute;right:56px;top:40px;opacity:0.9}
+    .lantern svg{width:82px;height:120px}
+
+    /* ==========================
+       Sections
+       ========================== */
+    section{padding:64px 0}
+    .section-title{font-size:26px;margin-bottom:18px;color:var(--text-dark)}
+
+    /* Gallery */
+    .gallery{position:relative;overflow:hidden}
+    .gallery-track{display:flex;gap:18px;transition:transform .36s cubic-bezier(.2,.9,.2,1);will-change:transform;align-items:stretch}
+    .gallery-track .slide{box-sizing:border-box;flex:0 0 auto}
+    .gallery-track .slide img{width:100%;display:block;border-radius:16px;border:1px solid rgba(212,183,106,0.18);box-shadow:var(--card-shadow);transition:transform .35s ease,box-shadow .25s ease;object-fit:cover;height:100%}
+    .gallery-track .slide img:hover{transform:scale(1.03);box-shadow:0 30px 50px rgba(107,42,58,0.08)}
+
+    /* Carousel controls */
+    .carousel-btn{display:flex;align-items:center;justify-content:center;position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.8);border:1px solid rgba(212,183,106,0.12);width:44px;height:44px;border-radius:999px;box-shadow:var(--card-shadow);cursor:pointer;font-size:22px;z-index:3}
+    .carousel-btn:focus{outline:3px solid rgba(215,183,106,0.25)}
+    .carousel-btn:disabled{opacity:0.45;cursor:not-allowed;pointer-events:none}
+    .carousel-btn.prev{left:12px}
+    .carousel-btn.next{right:12px}
+    .carousel-dots{display:flex;justify-content:center;gap:8px;margin-top:12px}
+    .carousel-dots button{width:10px;height:10px;border-radius:50%;border:none;background:rgba(107,42,58,0.12);cursor:pointer}
+    .carousel-dots button[aria-selected="true"]{background:var(--blush)}
+
+    /* Mobile: make the gallery a touch carousel */
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr;gap:28px;padding-top:100px}
+      .photo-visual{height:auto;align-items:center}
+      .photo-deco{left:-58px;width:52px}
+      .photo-card{max-width:320px;height:auto;min-height:0;flex:0 1 auto}
+
+      /* On mobile, place the photo container above the hero text and visually overlap slightly, but sit below header */
+      .hero > .container:nth-child(2){order:-1;padding-right:24px;display:flex;align-items:center;justify-content:center}
+      .photo-card{margin-right:0;transform:translateY(60px);z-index:20;max-width:300px;margin-left:auto;margin-right:auto;margin-top:12px}
+      .photo-card img{height:auto}
+      .lantern{right:18px}
+
+      .gallery-track{justify-content:flex-start}
+      .gallery-track .slide{padding:0 12px;box-sizing:border-box}
+      .gallery-track .slide img{height:auto;border-radius:14px}
+    }
+
+    /* Details cards */
+    .cards{display:flex;gap:18px}
+    .card{flex:1;background:var(--ivory);padding:18px;border-radius:14px;border:1px solid rgba(212,183,106,0.08);box-shadow:var(--card-shadow);text-align:center}
+    .card .ico{font-size:26px;color:var(--muted-gold);margin-bottom:8px}
+    @media(max-width:900px){.cards{flex-direction:column}}
+
+    /* RSVP form */
+    .rsvp-wrap{display:grid;grid-template-columns:1fr 360px;gap:22px;align-items:start}
+    .form-card{background:linear-gradient(180deg,rgba(255,255,255,0.7), rgba(255,255,255,0.5));padding:18px;border-radius:14px;border:1px solid rgba(212,183,106,0.08);box-shadow:var(--card-shadow)}
+    .form-card iframe{display:block;width:100%;max-width:100%;border:0}
+    @media(max-width:900px){
+      .rsvp-wrap{grid-template-columns:minmax(0,1fr)}
+      .rsvp-wrap .form-card{min-width:0}
+    }
+    label{display:block;font-size:14px;margin:8px 0 6px}
+    input[type=text],input[type=number],textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(107,42,58,0.06);background:transparent}
+    .radios{display:flex;gap:10px;flex-wrap:wrap}
+    .submit{display:inline-block;margin-top:12px;padding:10px 16px;border-radius:12px;background:linear-gradient(90deg,var(--blush),#ffb7c6);color:white;border:none;cursor:pointer}
+    .error{color:#b02a3a;margin-top:8px;font-size:14px}
+
+    /* Confirmation card */
+    .confirm{display:none;padding:18px;border-radius:14px;background:linear-gradient(180deg,var(--ivory),rgba(255,255,255,0.8));text-align:center;border:1px solid rgba(212,183,106,0.08);box-shadow:var(--card-shadow)}
+
+    /* Location & Contact */
+    .btn{display:inline-block;padding:10px 14px;border-radius:12px;background:var(--pastel-pink);border:1px solid rgba(212,183,106,0.08);cursor:pointer;text-decoration:none;color:var(--text-dark)}
+
+    /* Floating music button removed - autoplay will be attempted on load */
+
+    /* Countdown */
+    .countdown{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px}
+    .countdown .unit{background:var(--ivory);padding:10px 12px;border-radius:10px;border:1px solid rgba(212,183,106,0.08);min-width:92px;text-align:center}
+
+    /* Tidy CTA and countdown visuals */
+    .hero-cta .cta{padding:12px 18px;font-size:15px;border-radius:14px}
+    .countdown{gap:10px}
+    .countdown .unit{min-width:80px;padding:12px 14px}
+
+    /* Footer */
+    footer{padding:36px 0;text-align:center;color:rgba(107,42,58,0.9)}
+
+    /* Floating blossoms animation */
+    .blossom{position:fixed;left:10%;top:10%;pointer-events:none;opacity:0.9}
+    .blossom svg{width:60px;transform-origin:center;animation:floaty 8s ease-in-out infinite}
+    @keyframes floaty{0%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-18px) rotate(3deg)}100%{transform:translateY(0) rotate(-3deg)}}
+
+    /* Side decorations */
+    .side-decoration{position:fixed;z-index:2;width:clamp(150px,18vw,250px);height:auto;pointer-events:none;user-select:none;animation:sideFloat 9s ease-in-out infinite}
+    .side-decoration.left{left:-34px;top:8%;animation-delay:-3s}
+    .side-decoration.right-mid{right:-36px;top:34%}
+    .side-decoration.right-bottom{right:-30px;bottom:-20px;animation-delay:-6s}
+    @keyframes sideFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-12px) rotate(1deg)}}
+    @media(max-width:600px){
+      .side-decoration{display:block;width:110px;opacity:.78}
+      .side-decoration.left{left:-42px;top:8%}
+      .side-decoration.right-mid{right:-42px;top:34%}
+      .side-decoration.right-bottom{right:-42px;bottom:-25px}
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      *{animation:none!important;transition:none!important}
+    }
+
+    /* Small hint shown when autoplay is blocked (removed) */
+
+    /* Music mask + refined central circular button shown after loader if needed */
+    #music-mask{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(10,10,10,0.45), rgba(10,10,10,0.55));z-index:1500}
+    #music-mask.show{display:flex}
+    .music-circle{width:180px;height:180px;border-radius:50%;background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px;border:none;color:var(--ivory);font-family:'Playfair Display', serif;font-size:14px;font-weight:700;box-shadow:0 24px 60px rgba(107,42,58,0.18);cursor:pointer;transform:translateY(8px);transition:transform .26s cubic-bezier(.2,.9,.2,1),box-shadow .26s ease,filter .26s ease}
+    .music-circle:focus{outline:3px solid rgba(216,178,106,0.22);outline-offset:6px}
+    .music-circle:hover{transform:translateY(0) scale(1.02);box-shadow:0 36px 80px rgba(107,42,58,0.22);filter:brightness(1.03)}
+    .music-circle .label{display:flex;flex-direction:column;align-items:center;line-height:1}
+    .music-circle .title{font-size:15px;letter-spacing:0.06em}
+    .music-circle .sub{font-size:11px;opacity:0.9;margin-top:6px;font-weight:400;letter-spacing:0.12em}
+    .music-circle .note{width:42px;height:42px;fill:var(--muted-gold);margin-bottom:6px;filter:drop-shadow(0 6px 18px rgba(107,42,58,0.12))}
+    /* decorative ring */
+    .music-circle::before{content:'';position:absolute;width:220px;height:220px;border-radius:50%;border:1px solid rgba(216,178,106,0.06);box-shadow:0 8px 30px rgba(107,42,58,0.06);pointer-events:none}
+    #music-mask{backdrop-filter: blur(6px)}
+
+  </style>
+</head>
+<body>
+  <!-- Initial loading overlay inserted from user-provided design -->
+  <div id="loader">
+    <div class="clouds"></div>
+    <div id="fallLayer"></div>
+    <div class="scene">
+      <div class="lantern l">
+        <svg viewBox="0 0 60 78"><line x1="30" y1="0" x2="30" y2="10" stroke="#f0d38f" stroke-width="2"/><ellipse cx="30" cy="42" rx="24" ry="30" fill="#c22436" stroke="#f0d38f" stroke-width="2"/><rect x="12" y="14" width="36" height="6" rx="2" fill="#d8b26a"/><rect x="12" y="58" width="36" height="6" rx="2" fill="#d8b26a"/><line x1="20" y1="20" x2="20" y2="58" stroke="#7a1421" stroke-width="1" opacity=".5"/><line x1="30" y1="20" x2="30" y2="58" stroke="#7a1421" stroke-width="1" opacity=".5"/><line x1="40" y1="20" x2="40" y2="58" stroke="#7a1421" stroke-width="1" opacity=".5"/><line x1="30" y1="72" x2="30" y2="78" stroke="#d8b26a" stroke-width="2"/></svg>
+      </div>
+      <div class="lantern r">
+        <svg viewBox="0 0 60 78"><line x1="30" y1="0" x2="30" y2="10" stroke="#f0d38f" stroke-width="2"/><ellipse cx="30" cy="42" rx="24" ry="30" fill="#c22436" stroke="#f0d38f" stroke-width="2"/><rect x="12" y="14" width="36" height="6" rx="2" fill="#d8b26a"/><rect x="12" y="58" width="36" height="6" rx="2" fill="#d8b26a"/><line x1="20" y1="20" x2="20" y2="58" stroke="#7a1421" stroke-width="1" opacity=".5"/><line x1="30" y1="20" x2="30" y2="58" stroke="#7a1421" stroke-width="1" opacity=".5"/><line x1="40" y1="20" x2="40" y2="58" stroke="#7a1421" stroke-width="1" opacity=".5"/><line x1="30" y1="72" x2="30" y2="78" stroke="#d8b26a" stroke-width="2"/></svg>
+      </div>
+
+      <div class="gate-wrap">
+        <svg viewBox="-140 -140 280 280">
+          <circle class="gate-ring" cx="0" cy="0" r="118" stroke="#d8b26a" fill="none" stroke-width="2.5" opacity=".85"/>
+          <circle class="gate-ring-inner" cx="0" cy="0" r="106" fill="rgba(251,241,222,.05)" stroke="#f0d38f" stroke-width="1" opacity=".5"/>
+          <g id="flower" transform="translate(0,10)">
+            <defs>
+              <path id="petalPath" d="M0,-4 C -16,-28 -14,-58 0,-84 C 14,-58 16,-28 0,-4 Z"/>
+            </defs>
+            <circle class="petal-center" cx="0" cy="0" r="9"/>
+            <g class="petal" data-i="0" style="transform:rotate(0deg) scale(.25)"><g transform="rotate(0)"><use href="#petalPath"/></g></g>
+            <g class="petal" data-i="1"><g transform="rotate(45)"><use href="#petalPath"/></g></g>
+            <g class="petal" data-i="2"><g transform="rotate(90)"><use href="#petalPath"/></g></g>
+            <g class="petal" data-i="3"><g transform="rotate(135)"><use href="#petalPath"/></g></g>
+            <g class="petal" data-i="4"><g transform="rotate(180)"><use href="#petalPath"/></g></g>
+            <g class="petal" data-i="5"><g transform="rotate(225)"><use href="#petalPath"/></g></g>
+            <g class="petal" data-i="6"><g transform="rotate(270)"><use href="#petalPath"/></g></g>
+            <g class="petal" data-i="7"><g transform="rotate(315)"><use href="#petalPath"/></g></g>
+          </g>
+        </svg>
+      </div>
+
+      <div class="eyebrow">满 · 周 · 岁</div>
+      <div class="name">小 星 星</div>
+      <div class="sub">One Year of Sunshine</div>
+
+      <div class="load-row">
+        <div class="track"><div class="fill" id="fill"></div></div>
+        <div class="load-label"><span id="loadText">邀请函载入中</span><span id="pct">0%</span></div>
+      </div>
+
+      <!-- loader open button removed -->
+    </div>
+
+    <div class="invite" id="invite">
+      <div class="small">诚 挚 邀 请</div>
+      <h1>小星星 · 周岁宴</h1>
+      <div class="en">First Birthday Celebration</div>
+      <div class="rule"></div>
+      <div class="details">
+        <div><b>日期 DATE</b> &nbsp; 待定 · TBD</div>
+        <div><b>时间 TIME</b> &nbsp; 待定 · TBD</div>
+        <div><b>地点 VENUE</b> &nbsp; 待定 · TBD</div>
+      </div>
+      <button class="replay" id="replayBtn">重新播放 · REPLAY</button>
+    </div>
+  </div>
+  <header class="nav-wrap" role="banner">
+    <nav class="container" aria-label="Main navigation">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <img src="images/ICON.png" alt="Shihan Mallari Chen logo" />
+        </div>
+        <div>
+          <div style="font-weight:600">Shihan Mallari Chen</div>
+          <div style="font-size:12px;color:rgba(107,42,58,0.6)">Chinese Princess</div>
+        </div>
+      </div>
+      <div class="nav-links" role="navigation">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#event">Event</a>
+        <a href="#rsvp">RSVP</a>
+        <a href="#location">Location</a>
+      </div>
+      <button class="hamburger" aria-label="Open menu" id="hamburger">☰</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section id="home" class="hero" role="region" aria-labelledby="main-title">
+      <div class="hero-inner container">
+        <div class="eyebrow">RSVP</div>
+        <h1 id="main-title" class="hero-title">Shihan Mallari Chen</h1>
+        <div class="hero-sub">Our Little Princess is Turning One!</div>
+        <div class="hero-sub-text">Join us as we celebrate a full year of sweetness, laughter, and unforgettable memories!</div>
+
+
+        <div class="hero-meta" aria-hidden="false">
+          <strong>Date: </strong>
+          <weak>October 10, 2026</weak>
+          <div>
+          <strong>Dedication:</strong>
+          <weak>09:30 AM</weak>
+          <div>AGWC, All for God Worship Center</div>
+          </div>
+          <strong>Birthday Party:</strong>
+          <weak>11:30 AM</weak>
+          <div>
+          <strong>Venue:</strong>
+          <weak>Sophia's Resort</weak>
+          <div>Pentor, Dinalupihan, Bataan</div>
+          </div>
+        </div>
+
+        <div class="hero-cta">
+          <button class="cta" id="rsvp-now">RSVP NOW</button>
+        </div>
+        <div class="countdown" aria-live="polite" id="countdown">
+          <!-- JS fills countdown units -->
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="photo-visual">
+          <img class="photo-deco" src="icons/icon5.png" alt="" aria-hidden="true" />
+          <div class="photo-card" aria-hidden="false">
+            <img src="images/shihan-1.png" alt="Shihan smiling"/>
+            <div class="photo-overlay">Our Little Princess</div>
+          </div>
+        </div>
+        <div class="lantern" aria-hidden="true">
+          <svg viewBox="0 0 64 96"><defs></defs><g fill="none" stroke="rgba(107,42,58,0.08)" stroke-width="1"><ellipse cx="32" cy="28" rx="18" ry="12" fill="rgba(255,221,232,0.9)" stroke="rgba(212,183,106,0.12)"/><rect x="14" y="24" width="36" height="40" rx="18" fill="rgba(255,197,210,0.9)" stroke="rgba(212,183,106,0.12)"/><path d="M28 68h8v8h-8z" fill="rgba(212,183,106,0.9)"/></g></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT / GALLERY -->
+    <section id="about">
+      <div class="container">
+        <h2 class="section-title">Meet Our Little Princess</h2>
+        <p style="margin-bottom:14px;color:rgba(107,42,58,0.7)">A few sweet moments.</p>
+        <div class="gallery" role="region" aria-label="Meet our little princess gallery">
+          <!-- Desktop: grid. Mobile: touch-friendly carousel -->
+          <div class="gallery-track" role="list">
+            <div class="slide" role="listitem"><img src="images/shihan-1.png" alt="Shihan photo 1"/></div>
+            <div class="slide" role="listitem"><img src="images/shihan-2.png" alt="Shihan photo 2"/></div>
+            <div class="slide" role="listitem"><img src="images/shihan-3.png" alt="Shihan photo 3"/></div>
+            <div class="slide" role="listitem"><img src="images/Shihan-4.png" alt="Shihan photo 4"/></div>
+            <div class="slide" role="listitem"><img src="images/Shihan-5.png" alt="Shihan photo 5"/></div>
+            <div class="slide" role="listitem"><img src="images/Shihan-6.png" alt="Shihan photo 6"/></div>
+            <div class="slide" role="listitem"><img src="images/Shihan-7.png" alt="Shihan photo 7"/></div>
+            <div class="slide" role="listitem"><img src="images/Shihan-8.png" alt="Shihan photo 8"/></div>
+            <div class="slide" role="listitem"><img src="images/Shihan-9.png" alt="Shihan photo 9"/></div>
+          </div>
+          <button class="carousel-btn prev" aria-label="Previous image">‹</button>
+          <button class="carousel-btn next" aria-label="Next image">›</button>
+          <div class="carousel-dots" role="tablist" aria-label="Gallery navigation"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EVENT DETAILS -->
+    <section id="event">
+      <div class="container">
+        <h2 class="section-title">Event Details</h2>
+        <div class="cards" style="margin-top:14px">
+          <div class="card">
+            <div class="ico" aria-hidden="true">📅</div>
+            <h3>DATE</h3>
+            <div>October 10, 2026</div>
+          </div>
+          <div class="card">
+            <div class="ico" aria-hidden="true">⏰</div>
+            <h3>TIME</h3>
+            <div>Dedication: 09:30 AM</div>
+            <div>Birthday Party: 11:30 AM</div>
+          </div>
+          <div class="card">
+            <div class="ico" aria-hidden="true">📍</div>
+            <h3>VENUE</h3>
+            <div>Sophia's Resort<br/>Pentor, Dinalupihan, Bataan</div>
+            <a class="btn" target="_blank" rel="noopener" href="https://maps.app.goo.gl/mft8hG4iFFFS8iQV8">OPEN GOOGLE MAPS</a>
+          </div>
+            <div class="card">
+            <div class="ico" aria-hidden="true">👗</div>
+            <h3>Dress Code</h4>
+            <div>Please Wear:<br/>Touch of Pink or White</div>
+            <img class="dress-code-image" src="images/DressCode.png" alt="Dress code: touch of pink or white" />
+            
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RSVP -->
+    <section id="rsvp">
+      <div class="container">
+        <h2 class="section-title">RSVP</h2>
+        <p style="color:rgba(107,42,58,0.7);margin-bottom:14px">Please let us know if you can join our little princess.</p>
+        <div class="rsvp-wrap">
+          <div class="form-card" aria-label="RSVP form">
+            <!-- Embedded Google Form -->
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeyCDaI8iCsX9EIhuera_5x5UAFXfHaMKYNfMQMrE5qxr8yIQ/viewform?embedded=true" width="100%" height="700" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+          </div>
+
+          <aside class="form-card" aria-label="RSVP info">
+            <h3>For RSVP Confirmation</h3>
+            <p>Mommy Joana</p>
+            <a class="btn" href="https://www.facebook.com/joana.mallari.33" target="_blank" rel="noopener">MESSAGE MOMMY JOANA</a>
+            <hr style="margin:14px 0;border:none;border-top:1px dashed rgba(107,42,58,0.05)"/>
+            <div class="confirm" id="confirm-card" role="status" aria-live="polite">
+              <h3>Thank You!</h3>
+              <p>Your RSVP has been received.</p>
+              <p id="confirm-name" style="font-weight:600;margin-top:8px"></p>
+              <p id="confirm-attendance" style="margin-bottom:12px"></p>
+              <button class="btn" id="another">Submit Another RSVP</button>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+  <footer>
+    <div class="container">
+      <div>With love, we invite you to celebrate with us.</div>
+      <div style="margin-top:8px;font-weight:600">Shihan Mallari Chen — October 10, 2026</div>
+    </div>
+  </footer>
+
+  <!-- Floating blossom decor -->
+  <div class="blossom" aria-hidden="true" style="left:6%;top:24%">
+    <svg viewBox="0 0 64 64"><path d="M32 4c2 6 8 10 14 10-6 2-10 8-10 14-6-6-12-10-14-14C24 10 28 6 32 4z" fill="#ffd6e3"/></svg>
+  </div>
+
+  <img class="side-decoration left" src="images/2.png" alt="" aria-hidden="true" />
+  <img class="side-decoration right-bottom" src="images/3.png" alt="" aria-hidden="true" />
+
+  <!-- Music mask shown after loader ends to let user start audible playback -->
+  <div id="music-mask" aria-hidden="true">
+    <button id="sing-btn" class="music-circle" aria-label="Sing a song for Shihan">
+      <svg class="note" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+      <div class="label">
+        <div class="title">Sing a Song</div>
+        <div class="sub">for Shihan</div>
+      </div>
+    </button>
+  </div>
+
+  <!-- Music and audio (autoplay attempt) -->
+  <audio id="bg-music" src="media/Song.mp3" preload="auto" autoplay playsinline></audio>
+
+  <script>
+    /* ==========================
+       JavaScript: Helpers & Setup
+       ========================== */
+    // Loader: run initial loading animation and reveal site
+    (function initLoader(){
+      const loader = document.getElementById('loader');
+      const fillEl = document.getElementById('fill');
+      const pctEl = document.getElementById('pct');
+      const loadTextEl = document.getElementById('loadText');
+      // loader CTA removed; auto-proceed remains
+      const invite = document.getElementById('invite');
+      const replayBtn = document.getElementById('replayBtn');
+      const petals = Array.from(document.querySelectorAll('#loader .petal'));
+      const center = document.querySelector('#loader .petal-center');
+      const fallLayer = document.getElementById('fallLayer');
+
+      if(fallLayer){
+        for(let i=0;i<18;i++){
+          const leaf = document.createElement('span');
+          leaf.className = 'sakura-leaf';
+          leaf.style.left = `${Math.random()*100}%`;
+          leaf.style.setProperty('--drift', `${Math.round((Math.random()-.5)*180)}px`);
+          leaf.style.animationDuration = `${5.5 + Math.random()*5}s`;
+          leaf.style.animationDelay = `${Math.random()*-9}s`;
+          leaf.style.transform = `scale(${0.65 + Math.random()*.7})`;
+          fallLayer.appendChild(leaf);
+        }
+      }
+
+      let _autoTimer = null;
+      // audio hint removed per user request
+
+      function showMusicMask(){
+        const mask = document.getElementById('music-mask');
+        if(!mask) return;
+        mask.classList.add('show');
+        mask.setAttribute('aria-hidden','false');
+        const btn = document.getElementById('sing-btn');
+        if(!btn) return;
+        const onSing = ()=>{
+          const bg = document.getElementById('bg-music');
+          if(bg){ bg.muted = false; bg.play().then(()=>{ removeMusicMask(); }).catch(()=>{ /* keep mask for user */ }); }
+          else removeMusicMask();
+        };
+        btn.addEventListener('click', onSing, {once:true});
+        btn.addEventListener('keyup', (e)=>{ if(e.key==='Enter' || e.key===' ') btn.click(); });
+      }
+
+      function removeMusicMask(){
+        const mask = document.getElementById('music-mask');
+        if(!mask) return;
+        mask.classList.remove('show');
+        mask.setAttribute('aria-hidden','true');
+      }
+
+      function proceedToSite(){
+        invite.classList.add('show');
+        document.body.classList.add('loaded');
+        if(loader) loader.classList.add('hidden');
+        const bg = document.getElementById('bg-music');
+        if(bg){
+          try{
+            bg.muted = false;
+            const p = bg.play();
+            if(p && typeof p.then === 'function'){
+              p.then(()=>{ removeMusicMask(); }).catch(()=>{ showMusicMask(); });
+            } else {
+              // assume playing
+              removeMusicMask();
+            }
+          }catch(e){ showMusicMask(); }
+        }
+      }
+
+      function runLoad(){
+        petals.forEach(p=>p.classList.remove('bloom'));
+        center && center.classList.remove('bloom');
+        invite.classList.remove('show');
+        let progress = 0;
+        const total = 3600; // ms
+        const start = performance.now();
+        function tick(now){
+          progress = Math.min(100, ((now-start)/total)*100);
+          if(fillEl) fillEl.style.width = progress+'%';
+          if(pctEl) pctEl.textContent = Math.floor(progress)+'%';
+          const bloomed = Math.floor(progress/12.5);
+          petals.forEach((p,i)=>{ if(i<bloomed) p.classList.add('bloom'); });
+          if(progress>=100){
+            center && center.classList.add('bloom');
+            if(loadTextEl) loadTextEl.textContent = '邀请函已备好';
+            // schedule auto-proceed after a short delay
+            _autoTimer = setTimeout(()=>{ proceedToSite(); }, 900);
+            return;
+          }
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      // CTA removed; loader will auto-proceed
+
+      // replay brings back loader and resets
+      replayBtn.addEventListener('click', ()=>{
+        invite.classList.remove('show');
+        if(loader) loader.classList.remove('hidden');
+        document.body.classList.remove('loaded');
+        const bg = document.getElementById('bg-music'); if(bg){ bg.pause(); bg.currentTime = 0; bg.muted = true; }
+        // remove any existing mask
+        removeMusicMask();
+        if(loadTextEl) loadTextEl.textContent='邀请函载入中';
+        if(_autoTimer){ clearTimeout(_autoTimer); _autoTimer = null; }
+        runLoad();
+      });
+
+      // start
+      // Ensure audio plays muted during the loader (muted autoplay is widely allowed), then unmute when revealing site
+      const bg = document.getElementById('bg-music');
+      if(bg){ try{ bg.muted = true; bg.loop = true; bg.volume = 0.6; bg.play().catch(()=>{});}catch(e){} }
+      runLoad();
+      // also attempt unmuted autoplay on window load as a fallback (best-effort)
+      window.addEventListener('load', ()=>{ const bg2 = document.getElementById('bg-music'); if(bg2) bg2.play().catch(()=>{}); });
+    })();
+    // Smoothly scroll to RSVP when CTA clicked
+    document.getElementById('rsvp-now').addEventListener('click',function(){
+      document.getElementById('rsvp').scrollIntoView({behavior:'smooth',block:'start'});
+    });
+
+    // Mobile hamburger menu
+    const hamburger = document.getElementById('hamburger');
+    hamburger.addEventListener('click', ()=>{
+      const nav = document.querySelector('.nav-links');
+      if(nav.style.display==='flex'){nav.style.display='none';hamburger.setAttribute('aria-expanded','false')} else {nav.style.display='flex';nav.style.flexDirection='column';hamburger.setAttribute('aria-expanded','true')}
+    });
+
+    /* ==========================
+       Countdown
+       ========================== */
+    (function initCountdown(){
+      const dest = new Date('2026-10-10T00:00:00');
+      const el = document.getElementById('countdown');
+      function update(){
+        const now = new Date();
+        let diff = Math.max(0, dest - now);
+        if(diff<=0){ el.innerHTML = '<strong>It\'s Celebration Day!</strong>'; clearInterval(timer); return }
+        const days = Math.floor(diff/86400000); diff%=86400000;
+        const hours = Math.floor(diff/3600000); diff%=3600000;
+        const mins = Math.floor(diff/60000); diff%=60000;
+        const secs = Math.floor(diff/1000);
+        el.innerHTML = `
+          <div class="unit"><strong>${days}</strong><div style="font-size:12px">Days</div></div>
+          <div class="unit"><strong>${String(hours).padStart(2,'0')}</strong><div style="font-size:12px">Hours</div></div>
+          <div class="unit"><strong>${String(mins).padStart(2,'0')}</strong><div style="font-size:12px">Minutes</div></div>
+        `;
+      }
+      update();
+      const timer = setInterval(update,1000);
+    })();
+
+    // RSVP is handled via the embedded Google Form above; local form handlers removed.
+
+    // Autoplay handled by loader logic above; no visible music button is required.
+
+    /* ==========================
+       Keyboard accessibility for links/buttons
+       Ensure buttons are reachable and actionable
+       ========================== */
+    document.querySelectorAll('a,button').forEach(el=>{ el.addEventListener('keyup', (e)=>{ if(e.key==='Enter') el.click(); }) });
+
+    /* ==========================
+       Small enhancement: open external map in new tab via JS for keyboard
+       ========================== */
+    // Buttons already use target=_blank; nothing else required.
+
+    // Ensure images are responsive for users who tab to them
+    document.querySelectorAll('img').forEach(img=>{ img.setAttribute('loading','lazy') });
+
+    /* ==========================
+       Gallery Carousel (mobile)
+       - Initializes a touch-friendly carousel on small screens
+       - Adds prev/next controls, pagination dots, swipe support
+       - Keeps desktop layout as grid
+       ========================== */
+    (function initGalleryCarousel(){
+      const gallery = document.querySelector('.gallery');
+      const track = document.querySelector('.gallery-track');
+      const slides = Array.from(document.querySelectorAll('.gallery-track .slide'));
+      const prevBtn = document.querySelector('.carousel-btn.prev');
+      const nextBtn = document.querySelector('.carousel-btn.next');
+      const dotsWrap = document.querySelector('.carousel-dots');
+      if(!gallery || !track || slides.length===0 || !dotsWrap) return;
+
+      let index = 0;
+      let startX = 0;
+      let currentX = 0;
+      let isDragging = false;
+
+      slides.forEach((s,i)=>{
+        const btn = document.createElement('button');
+        btn.setAttribute('aria-role','tab');
+        btn.setAttribute('aria-selected', String(i===0));
+        btn.addEventListener('click', ()=>{ goTo(i); });
+        dotsWrap.appendChild(btn);
+      });
+
+      function getVisibleSlides(){
+        return window.matchMedia('(max-width:900px)').matches ? 1 : 3;
+      }
+
+      function getMaxIndex(){
+        return Math.max(0, slides.length - getVisibleSlides());
+      }
+
+      function getSlideWidth(){
+        const gap = parseFloat(getComputedStyle(track).gap) || 18;
+        if(window.matchMedia('(max-width:900px)').matches){
+          return gallery.clientWidth - 24;
+        }
+        const visibleSlides = getVisibleSlides();
+        return (gallery.clientWidth - (gap * (visibleSlides - 1))) / visibleSlides;
+      }
+
+      function update(){
+        const slideWidth = getSlideWidth();
+        const gap = parseFloat(getComputedStyle(track).gap) || 18;
+        const offset = index * (slideWidth + gap);
+
+        track.style.transform = `translateX(${-offset}px)`;
+        slides.forEach((slide) => {
+          slide.style.width = `${slideWidth}px`;
+          slide.style.minWidth = `${slideWidth}px`;
+          slide.style.flex = `0 0 ${slideWidth}px`;
+        });
+
+        const maxIndex = getMaxIndex();
+        prevBtn.disabled = index <= 0;
+        nextBtn.disabled = index >= maxIndex;
+
+        Array.from(dotsWrap.children).forEach((d,i)=>d.setAttribute('aria-selected', String(i===index)));
+      }
+
+      function goTo(i){
+        const maxIndex = getMaxIndex();
+        if(i < 0) index = 0;
+        else if(i > maxIndex) index = maxIndex;
+        else index = i;
+        update();
+      }
+      function next(){ if(index < getMaxIndex()) goTo(index + 1); }
+      function prev(){ if(index > 0) goTo(index - 1); }
+
+      prevBtn?.addEventListener('click', prev);
+      nextBtn?.addEventListener('click', next);
+
+      gallery.addEventListener('keydown', (e)=>{
+        if(e.key === 'ArrowLeft') prev();
+        if(e.key === 'ArrowRight') next();
+      });
+
+      track.addEventListener('touchstart', startDrag, {passive:true});
+      track.addEventListener('touchmove', onDrag, {passive:true});
+      track.addEventListener('touchend', endDrag);
+      track.addEventListener('mousedown', (e)=>{ e.preventDefault(); startDrag(e); });
+      track.addEventListener('mousemove', onDrag);
+      track.addEventListener('mouseup', endDrag);
+      track.addEventListener('mouseleave', endDrag);
+
+      function startDrag(e){
+        isDragging = true;
+        startX = (e.touches ? e.touches[0].clientX : e.clientX);
+        currentX = startX;
+      }
+      function onDrag(e){ if(!isDragging) return; currentX = (e.touches ? e.touches[0].clientX : e.clientX); }
+      function endDrag(){
+        if(!isDragging) return; isDragging = false;
+        const dx = currentX - startX;
+        const threshold = Math.max(30, gallery.clientWidth * 0.12);
+        if(dx > threshold) prev();
+        else if(dx < -threshold) next();
+        else update();
+      }
+
+      function refreshMode(){
+        track.style.display = 'flex';
+        prevBtn?.setAttribute('aria-hidden','false');
+        nextBtn?.setAttribute('aria-hidden','false');
+        dotsWrap?.setAttribute('aria-hidden','false');
+        update();
+      }
+
+      refreshMode();
+      window.addEventListener('resize', refreshMode);
+    })();
+
+    /* End of script */
+  </script>
+</body>
+</html>
